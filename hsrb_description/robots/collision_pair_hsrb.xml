@@ -44,7 +44,6 @@
 
   <group name= "wrist_roll">
     <object name="wrist_roll_link/collision/0"/>
-    <object name="wrist_roll_link/collision/1"/>
   </group>
 
   <group name= "gripper">
