@@ -4,7 +4,7 @@
   <xacro:macro name="ros2_control_rviz">
     <ros2_control name="GenericSystem" type="system">
       <hardware>
-        <plugin>fake_components/GenericSystem</plugin>
+        <plugin>tmc_hardware_interface/GenericSystem</plugin>
         <param name="fake_sensor_commands">False</param>
         <param name="state_following_offset">0.0</param>
         <param name="calculate_dynamics">True</param>
