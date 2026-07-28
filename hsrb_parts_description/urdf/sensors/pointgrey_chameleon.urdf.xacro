@@ -2,8 +2,6 @@
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
     <xacro:include filename="$(find hsrb_parts_description)/urdf/sensors/pointgrey_chameleon.gazebo.xacro"/>
 
-    <xacro:arg name="ignition_gazebo_sim" default="false" />
-
     <xacro:macro name="pointgrey_chameleon" params="prefix parent robot_namespace *origin baseline">
         <joint name="${prefix}_camera_joint" type="fixed">
             <xacro:insert_block name="origin" />
@@ -39,22 +37,12 @@
             </inertial>
         </link>
 
-        <xacro:if value="$(arg ignition_gazebo_sim)">
-            <xacro:pointgrey_chameleon_gazebo_ignition
-                sensor_name="${prefix}_camera"
-                parent_frame="${prefix}_camera_gazebo_frame"
-                topic_frame_id="${prefix}_camera_frame"
-                robot_namespace="${robot_namespace}"
-                baseline="${baseline}" />
-        </xacro:if>
-        <xacro:unless value="$(arg ignition_gazebo_sim)">
-            <xacro:pointgrey_chameleon_gazebo
-                sensor_name="${prefix}_camera"
-                parent_frame="${prefix}_camera_gazebo_frame"
-                topic_frame_id="${prefix}_camera_frame"
-                robot_namespace="${robot_namespace}"
-                baseline="${baseline}" />
-        </xacro:unless>
+        <xacro:pointgrey_chameleon_gazebo
+            sensor_name="${prefix}_camera"
+            parent_frame="${prefix}_camera_gazebo_frame"
+            topic_frame_id="${prefix}_camera_frame"
+            robot_namespace="${robot_namespace}"
+            baseline="${baseline}" />
     </xacro:macro>
 
 </robot>

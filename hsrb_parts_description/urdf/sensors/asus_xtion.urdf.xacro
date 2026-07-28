@@ -2,8 +2,6 @@
 <robot name="hsrb" xmlns:xacro="http://ros.org/wiki/xacro">
     <xacro:include filename="$(find hsrb_parts_description)/urdf/sensors/asus_xtion.gazebo.xacro"/>
 
-    <xacro:arg name="ignition_gazebo_sim" default="false" />
-
     <!-- rgbd_sensor -->
     <xacro:macro name="asus_xtion" params="prefix parent robot_namespace sensor_name *origin">
         <joint name="${prefix}_${sensor_name}_joint" type="fixed">
@@ -45,19 +43,11 @@
             </inertial>
         </link>
 
-        <xacro:if value="$(arg ignition_gazebo_sim)">
-            <xacro:asus_xtion_gazebo_ignition
-                robot_namespace="${robot_namespace}"
-                sensor_name="${prefix}_${sensor_name}"
-                parent_frame="${prefix}_${sensor_name}_gazebo_frame"
-                topic_frame_id="${prefix}_${sensor_name}_rgb_frame" />
-        </xacro:if>
-        <xacro:unless value="$(arg ignition_gazebo_sim)">
-            <xacro:asus_xtion_gazebo
-                robot_namespace="${robot_namespace}"
-                sensor_name="${prefix}_${sensor_name}"
-                parent_frame="${prefix}_${sensor_name}_gazebo_frame"
-                topic_frame_id="${prefix}_${sensor_name}_rgb_frame" />
-        </xacro:unless>
+        <xacro:asus_xtion_gazebo
+            robot_namespace="${robot_namespace}"
+            sensor_name="${prefix}_${sensor_name}"
+            parent_frame="${prefix}_${sensor_name}_gazebo_frame"
+            topic_frame_id="${prefix}_${sensor_name}_rgb_frame" />
     </xacro:macro>
+
 </robot>

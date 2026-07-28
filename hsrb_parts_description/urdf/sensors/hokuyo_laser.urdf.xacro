@@ -1,11 +1,10 @@
 <?xml version="1.0" ?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
+
     <xacro:include filename="$(find hsrb_parts_description)/urdf/sensors/hokuyo_laser.gazebo.xacro"/>
 
-    <xacro:arg name="ignition_gazebo_sim" default="false" />
-
     <!-- range sensor -->
-    <xacro:macro name="hokuyo_laser" params="prefix robot_namespace parent min_angle max_angle ros_topic:='scan' *origin">
+    <xacro:macro name="hokuyo_laser" params="prefix robot_namespace parent min_angle max_angle *origin">
         <joint name="${prefix}_range_sensor_joint" type="fixed">
             <xacro:insert_block name="origin" />
             <parent link="${parent}" />
@@ -31,22 +30,12 @@
             </inertial>
         </link>
 
-        <xacro:if value="$(arg ignition_gazebo_sim)">
-            <xacro:hokuyo_laser_gazebo_ignition
-                sensor_name="${prefix}_range_sensor"
-                robot_namespace="${robot_namespace}"
-                ros_topic="${ros_topic}"
-                frame_name="${prefix}_range_sensor_link"
-                min_angle="${min_angle}" max_angle="${max_angle}" />
-        </xacro:if>
-        <xacro:unless value="$(arg ignition_gazebo_sim)">
-            <xacro:hokuyo_laser_gazebo
-                sensor_name="${prefix}_range_sensor"
-                robot_namespace="${robot_namespace}"
-                ros_topic="${ros_topic}"
-                frame_name="${prefix}_range_sensor_link"
-                min_angle="${min_angle}" max_angle="${max_angle}" />
-        </xacro:unless>
+        <xacro:hokuyo_laser_gazebo
+            sensor_name="${prefix}_range_sensor"
+            robot_namespace="${robot_namespace}"
+            ros_topic="scan"
+            frame_name="${prefix}_range_sensor_link"
+            min_angle="${min_angle}" max_angle="${max_angle}" />
     </xacro:macro>
 
 </robot>

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (c) 2025 TOYOTA MOTOR CORPORATION
+# Copyright (c) 2026 TOYOTA MOTOR CORPORATION
 # All rights reserved.
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted (subject to the limitations in the disclaimer
@@ -29,8 +29,7 @@ import glob
 import os
 import subprocess
 import tempfile
-
-from nose.tools import eq_, ok_
+import unittest
 
 
 try:
@@ -40,62 +39,61 @@ except Exception:
 
 
 PACKAGE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-ROBOTS_DIR = os.path.join(PACKAGE_DIR, "robots")
-URDF_DIR = os.path.join(PACKAGE_DIR, "urdf")
+ROBOTS_DIR = os.path.join(PACKAGE_DIR, 'robots')
+URDF_DIR = os.path.join(PACKAGE_DIR, 'urdf')
 
 
-def test_generator_robot_urdf():
-    def test_robot_urdf(path):
-        u"""Test to verify if it can be correctly read as URDF after converting with XACRO"""
-        with tempfile.NamedTemporaryFile() as f:
-            args = ['rosrun', 'xacro', 'xacro', '--inorder', source]
-            eq_(subprocess.call(args, stdout=f), 0)
-            args = ['check_urdf', f.name]
-            subprocess.check_output(args)
+class UrdfTestCase(unittest.TestCase):
+    def test_generator_robot_urdf(self):
+        def test_robot_urdf(path):
+            u"""Test to verify if it can be correctly read as URDF after being converted with XACRO"""
+            with tempfile.NamedTemporaryFile() as f:
+                args = ['ros2', 'run', 'xacro', 'xacro', source]
+                self.assertEqual(subprocess.call(args, stdout=f), 0)
+                args = ['check_urdf', f.name]
+                subprocess.check_output(args)
 
-    matched = glob.glob(ROBOTS_DIR + "/*.urdf.xacro")
-    sources = [os.path.abspath(path) for path in matched]
-    for source in sources:
-        yield test_robot_urdf, source
+        matched = glob.glob(ROBOTS_DIR + '/*.urdf.xacro')
+        sources = [os.path.abspath(path) for path in matched]
+        for source in sources:
+            test_robot_urdf(source)
 
+    def test_generator_integrity(self):
+        def check_integrity(source):
+            args = ['ros2', 'run', 'xacro', 'xacro', source]
+            urdf = subprocess.check_output(args)
+            root = etree.fromstring(urdf)
 
-def test_generator_integrity():
-    def check_integrity(source):
-        args = ['rosrun', 'xacro', 'xacro', '--inorder', source]
-        urdf = subprocess.check_output(args)
-        root = etree.fromstring(urdf)
+            links = []
+            for link in root.findall('link'):
+                name = link.get('name')
+                self.assertIsNotNone(name, 'link({0})'.format(name))
+                links.append(name)
 
-        links = []
-        for link in root.findall('link'):
-            name = link.get('name')
-            ok_(name is not None, "link({0})".format(name))
-            links.append(name)
+            joints = []
+            for joint in root.findall('joint'):
+                name = joint.get('name')
+                self.assertIsNotNone(name, 'joint({0})'.format(name))
+                joints.append(name)
+                parent = joint.find('parent')
+                self.assertIn(parent.get('link'), links, 'joint({0})'.format(name))
+                child = joint.find('child')
+                self.assertIn(child.get('link'), links, 'joint({0})'.format(name))
 
-        joints = []
-        for joint in root.findall('joint'):
-            name = joint.get('name')
-            ok_(name is not None, "joint({0})".format(name))
-            joints.append(name)
-            parent = joint.find('parent')
-            ok_(parent.get('link') in links, "joint({0})".format(name))
-            child = joint.find('child')
-            ok_(child.get('link') in links, "joint({0})".format(name))
+            for trans in root.findall('transmission'):
+                name = trans.get('name')
+                joint = trans.find('joint')
+                self.assertIn(joint.get('name'), joints, 'transmission({0})'.format(name))
 
-        for trans in root.findall('transmission'):
-            name = trans.get('name')
-            joint = trans.find('joint')
-            ok_(joint.get('name') in joints, "transmission({0})".format(name))
+            for gazebo in root.findall('gazebo'):
+                ref = gazebo.get('reference')
+                if ref is None:
+                    # When reference is None, <gazebo> tag is added to <robot>.
+                    continue
+                self.assertIn(ref, links + joints,
+                              "Unresolvable reference '{0}':\n{1}".format(ref, etree.tostring(gazebo)))
 
-        for gazebo in root.findall('gazebo'):
-            ref = gazebo.get('reference')
-            if ref is None:
-                # When reference is None, <gazebo> tag is added to <robot>.
-                continue
-            ok_(ref in links + joints,
-                "Unresolvable reference '{0}':\n{1}".format(
-                    ref, etree.tostring(gazebo)))
-
-    matched = glob.glob(ROBOTS_DIR + "/*.urdf.xacro")
-    sources = [os.path.abspath(path) for path in matched]
-    for source in sources:
-        yield check_integrity, source
+        matched = glob.glob(ROBOTS_DIR + '/*.urdf.xacro')
+        sources = [os.path.abspath(path) for path in matched]
+        for source in sources:
+            check_integrity(source)
