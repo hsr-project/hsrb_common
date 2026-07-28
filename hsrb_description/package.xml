@@ -1,6 +1,6 @@
 <package format="3">
   <name>hsrb_description</name>
-  <version>2.2.0</version>
+  <version>3.0.0</version>
   <description>HSR robot definition file</description>
   <maintainer email="xr-hsr-support@mail.toyota.co.jp">HSR Support</maintainer>
 
@@ -19,6 +19,8 @@
   <exec_depend>robot_state_publisher</exec_depend>
   <exec_depend>rviz2</exec_depend>
   <exec_depend>xacro</exec_depend>
+
+  <test_depend>ament_cmake_pytest</test_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

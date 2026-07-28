@@ -2,8 +2,6 @@
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
     <xacro:include filename="$(find hsrb_parts_description)/urdf/sensors/wide_camera.gazebo.xacro"/>
 
-    <xacro:arg name="ignition_gazebo_sim" default="false" />
-
     <!-- wide rgb camera -->
     <xacro:macro name="wide_camera" params="prefix parent robot_namespace rpy *origin">
         <joint name="${prefix}_camera_frame_joint" type="fixed">
@@ -34,19 +32,11 @@
             </inertial>
         </link>
 
-        <xacro:if value="$(arg ignition_gazebo_sim)">
-            <xacro:wide_camera_gazebo_ignition
-                robot_namespace="${robot_namespace}"
-                sensor_name="${prefix}_camera"
-                parent_frame="${prefix}_camera_gazebo_frame"
-                topic_frame_id="${prefix}_camera_frame" />
-        </xacro:if>
-        <xacro:unless value="$(arg ignition_gazebo_sim)">
-            <xacro:wide_camera_gazebo
-                robot_namespace="${robot_namespace}"
-                sensor_name="${prefix}_camera"
-                parent_frame="${prefix}_camera_gazebo_frame"
-                topic_frame_id="${prefix}_camera_frame" />
-        </xacro:unless>
+        <xacro:wide_camera_gazebo
+            robot_namespace="${robot_namespace}"
+            sensor_name="${prefix}_camera"
+            parent_frame="${prefix}_camera_gazebo_frame"
+            topic_frame_id="${prefix}_camera_frame"
+            />
     </xacro:macro>
 </robot>

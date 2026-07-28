@@ -2,8 +2,6 @@
 <robot name="hsrb" xmlns:xacro="http://ros.org/wiki/xacro">
     <xacro:include filename="$(find hsrb_parts_description)/urdf/sensors/minebea_ft_sensor.gazebo.xacro"/>
 
-    <xacro:arg name="ignition_gazebo_sim" default="false" />
-
     <xacro:macro name="minebea_ft_sensor" params="prefix robot_namespace parent *origin">
         <joint name="${prefix}_ft_sensor_frame_joint" type="revolute">
             <xacro:insert_block name="origin"/>
@@ -20,17 +18,9 @@
             </inertial>
         </link>
 
-        <xacro:if value="$(arg ignition_gazebo_sim)">
-            <xacro:minebea_ft_sensor_gazebo_ignition
-                robot_namespace="${robot_namespace}"
-                joint_name="${prefix}_ft_sensor_frame_joint"
-                ros_topic="${prefix}_wrench/raw"/>
-        </xacro:if>
-        <xacro:unless value="$(arg ignition_gazebo_sim)">
-            <xacro:minebea_ft_sensor_gazebo
-                robot_namespace="${robot_namespace}"
-                joint_name="${prefix}_ft_sensor_frame_joint"
-                ros_topic="${prefix}_wrench/raw"/>
-        </xacro:unless>
+        <xacro:minebea_ft_sensor_gazebo
+            robot_namespace="${robot_namespace}"
+            joint_name="${prefix}_ft_sensor_frame_joint"
+            ros_topic="${prefix}_wrench/raw" />
     </xacro:macro>
 </robot>

@@ -12,7 +12,6 @@
     <xacro:include filename="$(find hsrb_description)/urdf/wrist_v0/wrist.urdf.xacro" />
     <xacro:include filename="$(find hsrb_description)/urdf/hand_v0/hand.urdf.xacro" />
 
-    <xacro:arg name="gazebo_sim" default="False"/>
     <xacro:arg name="ignition_gazebo_sim" default="False"/>
     <xacro:arg name="rviz_sim" default="False"/>
 
@@ -48,14 +47,9 @@
     </xacro:hsrb_hand>
 
     <!-- Import ros2_control description -->
-    <xacro:if value="${not $(arg gazebo_sim) and not $(arg ignition_gazebo_sim) and not $(arg rviz_sim)}">
+    <xacro:if value="${not $(arg ignition_gazebo_sim) and not $(arg rviz_sim)}">
       <xacro:include filename="$(find hsrb_description)/urdf/ros2_control.robot.xacro" />
       <xacro:ros2_control_robot/>
-    </xacro:if>
-
-    <xacro:if value="$(arg gazebo_sim)">
-      <xacro:include filename="$(find hsrb_description)/urdf/ros2_control.gazebo.xacro" />
-      <xacro:ros2_contorl_gazebo/>
     </xacro:if>
 
     <xacro:if value="$(arg ignition_gazebo_sim)">
