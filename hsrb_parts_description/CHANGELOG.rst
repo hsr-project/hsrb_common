@@ -7,10 +7,6 @@ Changelog for package hsrb_parts_description
 * Migration to ROS2 jazzy
 * Contributors: Katsushi Fukuoka, Shigeo Tsuduki, Hiroaki Yaguchi, Keisuke Takeshita
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Changelog for package hsrb_parts_description
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
 2.2.0 (2025-12-04)
 -------------------
 * bugfix: reset hsrb_joint macro.
